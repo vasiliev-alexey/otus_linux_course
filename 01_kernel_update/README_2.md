@@ -67,8 +67,6 @@
 
 10. Загружаем  и разархивируем исходные коды ядра
 ``` bash
-    mount -t tmpfs -o size=1G tmpfs /kernel
-    cd /kernel
     curl https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.59.tar.xz --output linux-5.15.59.tar.xz && tar xvf linux-5.15.59.tar.xz 
     cd linux-5.15.59/
 ```
@@ -123,3 +121,21 @@
 ---
 [Compile Linux Kernel on CentOS7](https://linuxhint.com/compile-linux-kernel-centos7/)
 [how-to-upload-vagrant-box-to-vagrant-cloud](https://blog.ycshao.com/2017/09/16/how-to-upload-vagrant-box-to-vagrant-cloud/)
+
+
+
+ ``` json
+{
+      "type": "shell",
+      "inline": [
+        "sleep 30",
+        "sudo yum -y install bzip2",
+        "sudo mkdir /media/VBoxGuestAdditions",
+        "sudo mount -o loop,ro /home/vagrant/VBoxGuestAdditions.iso /media/VBoxGuestAdditions",
+        "sudo /bin/sh /media/VBoxGuestAdditions/VBoxLinuxAdditions.run",
+        "sudo umount /media/VBoxGuestAdditions",
+        "sudo rmdir /media/VBoxGuestAdditions"
+      ]
+    }
+```
+ 
