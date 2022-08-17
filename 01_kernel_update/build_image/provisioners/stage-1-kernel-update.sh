@@ -2,7 +2,7 @@
 
 # Install elrepo
 yum makecache
-yum install -y ncurses-devel make gcc bc openssl-devel  elfutils-libelf-devel  rpm-build flex bison yum-utils centos-release-scl;
+yum install -y ncurses-devel make gcc bc openssl-devel  elfutils-libelf-devel  rpm-build flex bison yum-utils centos-release-scl rsync;
 yum -y --enablerepo=centos-sclo-rh-testing install devtoolset-7-gcc;
 echo "source /opt/rh/devtoolset-7/enable" | sudo tee -a /etc/profile;
 source /opt/rh/devtoolset-7/enable;

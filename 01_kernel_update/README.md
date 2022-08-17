@@ -24,14 +24,14 @@
 ### Vagrant
 1. Устанавливаем [Virtualbox](https://www.virtualbox.org/wiki/Linux_Downloads) 
 2. Устанавливаем [Vagrant](https://www.vagrantup.com/)
-3. Скачиваем базовый образ [centos/7 ](https://app.vagrantup.com/centos/boxes/7)
+3. Собираем базовый образ centos
 ``` bash
-    wget https://cloud.centos.org/centos/7/vagrant/x86_64/images/CentOS-7-x86_64-Vagrant-2004_01.VirtualBox.box
+  
 ```
 4. Устанавливаем  его в локальный репозиторий 
 
 ``` bash
-    vagrant box add --name 'centos/7' /data/vms/repo/boxes/CentOS-7-x86_64-Vagrant-2004_01.VirtualBox.box
+    vagrant box add --name 'avasiliev/cent_7_7' /data/lab/repo/centos-7.7.7-kernel-5-x86_64-Minimal.box
 ```
 
 5. Иницируем проект
@@ -58,9 +58,7 @@
 9. Устанавливаем треуемые зависимости
 
 ``` bash
-    sudo yum install -y ncurses-devel make gcc bc openssl-devel
-    sudo yum install -y elfutils-libelf-devel
-    sudo yum install -y rpm-build flex bison yum-utils centos-release-scl;
+    sudo yum install -y ncurses-devel make gcc bc openssl-devel   elfutils-libelf-devel  rpm-build flex bison yum-utils centos-release-scl;
     sudo yum -y --enablerepo=centos-sclo-rh-testing install devtoolset-7-gcc;
     echo "source /opt/rh/devtoolset-7/enable" | sudo tee -a /etc/profile;
     source /opt/rh/devtoolset-7/enable;
@@ -69,15 +67,14 @@
 
 10. Загружаем  и разархивируем исходные коды ядра
 ``` bash
-    curl https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.59.tar.xz --output linux-5.15.59.tar.xz
-    tar xvf linux-5.15.59.tar.xz 
+    curl https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.59.tar.xz --output linux-5.15.59.tar.xz && tar xvf linux-5.15.59.tar.xz 
     cd linux-5.15.59/
 ```
 
 
 11. Копируем оригинальный конфиг системы
 ```
-    sudo cp -v /boot/config* .config
+    sudo cp -v /boot/config-$(uname -r) .config
 ```
 
 12. Выполним конфигурацию
@@ -90,14 +87,14 @@
 13.  Запускаем компиляцию и сборку ядра в 8 потоков
 
 ``` bash
-    make -j8 rpm-pkg
+    make -j4 rpm-pkg
 ```
 
 
 14.  Устанавливаем собранные пакеты
 
 ``` bash
-    sudo rpm -iUv ~/rpmbuild/RPMS/x86_64/*.rpm
+    sudo rpm -iUv ./rpmbuild/RPMS/x86_64/*.rpm
 ```
 
 15. Перегенерируем загрузочную конфигурацию
@@ -123,3 +120,30 @@
 
 ---
 [Compile Linux Kernel on CentOS7](https://linuxhint.com/compile-linux-kernel-centos7/)
+[how-to-upload-vagrant-box-to-vagrant-cloud](https://blog.ycshao.com/2017/09/16/how-to-upload-vagrant-box-to-vagrant-cloud/)
+
+[centos-7-extend-partition-with-unallocated-space](https://serverfault.com/questions/861517/centos-7-extend-partition-with-unallocated-space)
+
+``` bash
+parted ---pretend-input-tty /dev/sda resizepart 2 100%;
+partx -u /dev/sda; 
+pvresize /dev/sda2;
+lvextend -r centos_q0/root /dev/sda2
+```
+
+
+ ``` json
+{
+      "type": "shell",
+      "inline": [
+        "sleep 30",
+        "sudo yum -y install bzip2",
+        "sudo mkdir /media/VBoxGuestAdditions",
+        "sudo mount -o loop,ro /home/vagrant/VBoxGuestAdditions.iso /media/VBoxGuestAdditions",
+        "sudo /bin/sh /media/VBoxGuestAdditions/VBoxLinuxAdditions.run",
+        "sudo umount /media/VBoxGuestAdditions",
+        "sudo rmdir /media/VBoxGuestAdditions"
+      ]
+    }
+```
+ 
