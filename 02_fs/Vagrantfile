@@ -72,6 +72,7 @@ Vagrant.configure("2") do |config|
                      end
                   end
           end
+          box.vm.provision "file", source: "./raid.sh", destination: "raid.sh"
           box.vm.provision "shell", inline: <<-SHELL
               mkdir -p ~root/.ssh
               cp ~vagrant/.ssh/auth* ~root/.ssh
