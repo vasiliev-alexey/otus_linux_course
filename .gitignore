@@ -1,2 +1,5 @@
-**/*.vdi
+**/*.box
 **/.vagrant/
+**/*.log
+**/tmp/
+**/*.vdi
