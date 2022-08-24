@@ -64,8 +64,8 @@ Vagrant.configure("2") do |config|
                        end
                     end
             end
-        box.vm.provision "file", source: "./task_1_1.sh", destination: "task_1_1.sh"
-        box.vm.provision "file", source: "./task_1_2.sh", destination: "task_1_2.sh"
+        box.vm.provision "file", source: "src/", destination:  "~/tasks"
+      
         box.vm.provision "shell", inline: <<-SHELL
             mkdir -p ~root/.ssh
             cp ~vagrant/.ssh/auth* ~root/.ssh
