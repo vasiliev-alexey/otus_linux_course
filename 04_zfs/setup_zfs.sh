@@ -13,8 +13,8 @@ rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-zfsonlinux
 
 dnf config-manager --disable zfs
 dnf config-manager --enable zfs-kmod
-dnf install -y zfs
-#modprobe zfs
+dnf install -y zfs wget
+modprobe zfs
 
 
 
