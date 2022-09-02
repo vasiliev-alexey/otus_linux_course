@@ -89,13 +89,40 @@ Aug 31 11:43:04 build-server root[7041]: Wed Aug 31 11:43:04 UTC 2022: Alarm det
 sudo yum install epel-release -y && yum install spawn-fcgi php php-cli mod_fcgid httpd -y
 ```
 2. Создаем юнитфайл
-```sh
-
+```ini
+[Unit]
+Description=Spawn-fcgi startup service by Otus
+After=network.target
+[Service]
+Type=simple
+PIDFile=/var/run/spawn-fcgi.pid
+EnvironmentFile=/etc/sysconfig/spawn-fcgi
+ExecStart=/usr/bin/spawn-fcgi -n \$OPTIONS
+KillMode=process
+[Install]
+WantedBy=multi-user.target
 ```
 3. Перезагружаем конфигурацию systemd и активируем сервис
 
 ```sh
+sudo systemctl daemon-reload
+sudo systemctl start spawn-fcgi
+sudo systemctl status spawn-fcgi
+```
 
+проверяем
+
+```sh
+    deamon-server: ● spawn-fcgi.service - Spawn-fcgi startup service by Otus
+    deamon-server:    Loaded: loaded (/etc/systemd/system/spawn-fcgi.service; disabled; vendor preset: disabled)
+    deamon-server:    Active: active (running) since Thu 2022-09-01 06:40:22 UTC; 53ms ago
+    deamon-server:  Main PID: 23619 (php-cgi)
+    deamon-server:     Tasks: 20 (limit: 24916)
+    deamon-server:    Memory: 12.6M
+    deamon-server:    CGroup: /system.slice/spawn-fcgi.service
+    deamon-server:            ├─23619 /usr/bin/php-cgi
+    ...
+    deamon-server: Sep 01 06:40:22 deamon-server systemd[1]: Started Spawn-fcgi startup service by Otus.
 ```
 
 </details>
