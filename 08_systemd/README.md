@@ -127,4 +127,77 @@ sudo systemctl status spawn-fcgi
 
 </details>
 
+ <details><summary>Дополнить unit-файл httpd (он же apache) возможностью запустить несколько инстансов сервера с разными конфигурационными файлами</summary>
+ 1. Устанваливаем appach
+ ```sh
+ sudo yum install -y httpd
+ ```
  
+ 2. Создаем 2 env для  наших сервисов
+ ```sh
+ sudo cat << EOF > /etc/sysconfig/httpd-1
+OPTIONS=-f conf/httpd-1.conf
+EOF
+
+sudo cat << EOF > /etc/sysconfig/httpd-2
+OPTIONS=-f conf/httpd-2.conf
+EOF
+ ```
+
+ 3. Создаем юнит
+ ```sh
+sudo cat << EOF > /etc/systemd/system/httpd@.service
+[Unit]
+Description=Apache HTTP Server
+After=network.target remote-fs.target nss-lookup.target
+Documentation=man:httpd(8)
+Documentation=man:apachectl(8)
+
+[Service]
+Type=notify
+EnvironmentFile=/etc/sysconfig/httpd-%I
+ExecStart=/usr/sbin/httpd \$OPTIONS -DFOREGROUND
+ExecReload=/usr/sbin/httpd \$OPTIONS -k graceful
+ExecStop=/bin/kill -WINCH {\$MAINPID}
+KillSignal=SIGCONT
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+EOF
+```
+
+4. Копируем конфиг apache и модифицируем его для нескольких сервисов 
+```sh
+for i in 1 2; do cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd-$i.conf && sed -i "s/logs\/error_log/logs\/error_log-$i/" /etc/httpd/conf/httpd-$i.conf  && sed -i "/ServerRoot \"\/etc\/httpd\"/a PidFile \/var\/run\/httpd-$i.pid" /etc/httpd/conf/httpd-$i.conf  && sed -i "s/Listen 80/Listen 808$i/g" /etc/httpd/conf/httpd-$i.conf ; done
+```
+
+5. Пеерезапускаем сервисы
+``` sh
+sudo systemctl daemon-reload && systemctl start httpd@1 && systemctl start httpd@2
+```
+
+6. Проверяем результат
+
+``` bash
+sudo ss -tulpen | grep httpd
+```
+
+```ini
+[vagrant@deamon-server ~]$ sudo ss -tulpen | grep httpd
+tcp   LISTEN 0      128                *:8081            *:*    users:(("httpd",pid=14354,fd=4),("httpd",pid=14353,fd=4),("httpd",pid=14352,fd=4),("httpd",pid=14314,fd=4)) ino:45559 sk:7 v6only:0 <->
+tcp   LISTEN 0      128                *:8082            *:*    users:(("httpd",pid=14475,fd=4),("httpd",pid=14474,fd=4),("httpd",pid=14473,fd=4),("httpd",pid=14356,fd=4)) ino:45686 sk:8 v6only:0 <->
+
+```
+
+</details>
+
+---
+Как проверить
+
+```sh
+vagrant up --no-provision
+vagrant provision --provision-with task1
+vagrant provision --provision-with task2
+vagrant provision --provision-with task3
+```

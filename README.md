@@ -4,3 +4,4 @@
 [1. Обновить ядро в базовой системе](01_kernel_update/README.md)
 [2. Работа с mdadm](02_fs/README.md)
 [4. Практические навыки работы с ZFS](04_zfs/README.md)
+[8. Systemd](08_systemd/README.md)
