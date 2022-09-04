@@ -7,3 +7,5 @@
 [3. Работа с LVM](03_lvm/README.md)  
 [4. Практические навыки работы с ZFS](04_zfs/README.md)  
 [5. Vagrant стенд для NFS](05_nfs/README.md)  
+
+[7. Работа с загрузчиком](07_boot/README.md)  

@@ -1,0 +1,26 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+    config.vm.define "bootloader-server" do |server|
+      config.vm.box = 'centos/8.4'
+      config.vm.box_url = 'http://cloud.centos.org/centos/8/vagrant/x86_64/images/CentOS-8-Vagrant-8.4.2105-20210603.0.x86_64.vagrant-virtualbox.box'
+    
+  
+      config.ssh.insert_key = 'false'
+    
+      server.vm.host_name = 'bootloader-server'
+      server.vm.network :private_network, ip: "192.168.56.101" 
+      
+      server.vm.provider "virtualbox" do |vb|
+        vb.memory = 4096
+        vb.cpus = 2
+        vb.customize ["modifyvm", :id, "--vram", "128"]
+        # vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      end
+    
+      end
+    
+    
+    end
