@@ -43,12 +43,15 @@ reboot
 <details><summary>Способ 2</summary>   
 
 1. Добавляем прерыватель в загрузку
+
 ```sh
 rd.break
 ```
+
 ![rd.break](img/init_1_4.png)
 
 2. Продолжаем загрузку
+
 ![Продолжаем загрузку](img/init_1_5.png)
 
 3. Монтируем нашу систему в sysroot
@@ -107,5 +110,73 @@ mkinitrd -f -v /boot/initramfs-$(uname -r).img $(uname -r)
  </details>
 
  ### 3. Добавить модуль в initrd.
+<details> <summary>Решение</summary>
+
+1. Создаем директорию модуля
+```sh
+mkdir -p /usr/lib/dracut/modules.d/05test
+```
+2. Создаем файл с функциями модуля /05test/module-setup.sh
+```sh
+#!/bin/bash
+
+check() {
+    return 0
+}
+
+depends() {
+    return 0
+}
+
+install() {
+    inst_hook cleanup 00 "\${moddir}/test.sh"
+}
+```
+
+выставляем права на исполнение
+```sh
+chmod +x /usr/lib/dracut/modules.d/05test/module-setup.sh
+```
+
+3. Создаем файл с логикой модуля 05test/test.sh
+
+```sh
+#!/bin/bash
+
+exec 0<>/dev/console 1<>/dev/console 2<>/dev/console
+cat <<'msgend'
+Hello! You are in dracut module!
+ ___________________
+< I am dracut module >
+ -------------------
+   \
+    \
+        .--.
+       |o_o |
+       |:_/ |
+      //   \ \
+     (|     | )
+    /\'\_   _/\`\
+    \\___)=(___/
+msgend
+sleep 10
+echo " continuing...."
+```
+
+Даем права на исполнение
+```sh
+chmod +x /usr/lib/dracut/modules.d/05test/test.sh
+```
+
+4. Перегенерируем загрузчик
+```sh
+mkinitrd -f -v /boot/initramfs-$(uname -r).img $(uname -r)
+```
+
+5. Проверим что модуль собрался
+```sh
+lsinitrd -m /boot/initramfs-$(uname -r).img | grep test
+```
 
  ![Результат](./img/init_3_1.png)
+  </details>
