@@ -14,7 +14,22 @@
 
 ---
 
+### решение
+[Скрипт](mailgen.sh)
 
+### как проверить
 
+``` sh 
+# Установим пакет faketime
+ sudo apt install  faketime    
+# Создадим каталог для локфайла  и дадим права
+ sudo mkdir /var/run/monitor
+ sudo chown $USER   /var/run/monitor  
+```
+тестим с подменной даты
+```sh
+faketime '2019-08-14 08:25:30' bash mailgen.sh
+```
 ---
 [Команда awk – примеры использования в Linux и Unix](https://habr.com/ru/company/ruvds/blog/665084/)
+
