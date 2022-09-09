@@ -9,4 +9,5 @@
 [4. Практические навыки работы с ZFS](04_zfs/README.md)  
 [5. Vagrant стенд для NFS](05_nfs/README.md)  
 [6. Размещаем свой RPM в своем репозитории](06_rpm/README.md)  
+[7. Работа с загрузчиком](07_boot/README.md)  
 [8. Systemd](08_systemd/README.md)
