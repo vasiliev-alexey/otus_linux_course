@@ -11,4 +11,5 @@
 [6. Размещаем свой RPM в своем репозитории](06_rpm/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/RPM_Logo.svg" height="20"   alt="bash">  
 [7. Работа с загрузчиком](07_boot/README.md)  
 [8. Systemd](08_systemd/README.md)  <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/Systemd-logo.svg" height="20"   alt="Systemd">  
-[9. Bash](09_bash/README.md)  <img src="https://raw.githubusercontent.com/gilbarbara/logos/master/logos/bash-icon.svg" height="20"   alt="bash"> 
+[9. Bash](09_bash/README.md)  <img src="https://raw.githubusercontent.com/gilbarbara/logos/master/logos/bash-icon.svg" height="20"   alt="bash">   
+[10. Процессы](10_process/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f5/Noun_Project_process_icon_2519390.svg" height="20"   alt="bash">    
