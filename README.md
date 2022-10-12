@@ -15,3 +15,4 @@
 [10. Процессы](10_process/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f5/Noun_Project_process_icon_2519390.svg" height="20"   alt="bash">   
  [11. Первые шаги с Ansible](11_ansible/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Ansible_logo.svg/256px-Ansible_logo.svg.png?20210414073712" height="20"   alt="Ansible_logo">    
 
+ [14. Настройка мониторинга](14_monitoring/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Prometheus_software_logo.svg" height="20"   alt="мониторинг">   
