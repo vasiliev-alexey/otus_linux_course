@@ -13,6 +13,8 @@
 [8. Systemd](08_systemd/README.md)  <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/Systemd-logo.svg" height="20"   alt="Systemd">  
 [9. Bash](09_bash/README.md)  <img src="https://raw.githubusercontent.com/gilbarbara/logos/master/logos/bash-icon.svg" height="20"   alt="bash">   
 [10. Процессы](10_process/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f5/Noun_Project_process_icon_2519390.svg" height="20"   alt="bash">   
- [11. Первые шаги с Ansible](11_ansible/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Ansible_logo.svg/256px-Ansible_logo.svg.png?20210414073712" height="20"   alt="Ansible_logo">    
+[11. Первые шаги с Ansible](11_ansible/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Ansible_logo.svg/256px-Ansible_logo.svg.png?20210414073712" height="20"   alt="Ansible_logo">    
 
- [13. Docker](13_docker/README.md)    <img src="https://www.svgrepo.com/show/349342/docker.svg" height="20"   alt="Ansible_logo">   
+[13. Docker](13_docker/README.md)    <img src="https://www.svgrepo.com/show/349342/docker.svg" height="20"   alt="Ansible_logo">   
+[14. Настройка мониторинга](14_monitoring/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Prometheus_software_logo.svg" height="20"   alt="Prometheus">    <img src="https://www.vectorlogo.zone/logos/grafana/grafana-icon.svg" height="20"   alt="grafana">   
+
