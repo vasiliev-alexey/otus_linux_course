@@ -1,0 +1,89 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+
+  tasks:
+    - name: Print return information from the previous task
+      ansible.builtin.debug:
+        msg: "Hi otus -task 15 "
+ 
+
+    - name: Ensure group "admin" exists
+      ansible.builtin.group:
+        name: admin
+        state: present
+          
+    - name: Add the user 'adminuser'
+      ansible.builtin.user:
+        name: adminuser
+        password: $6$1GZsubYfZ5tNUV5M$xv6ET3WzWOhr4ZsZat.OJRhMQ2S1MZwkfh816.VGD8P8Mlw.zCPF/rQ8wu8543wC7S9acilWFUloWLyY5YYfm/ 
+        #adminuser
+        comment: user in admin group
+        uid: 2000
+        group: admin
+
+    - name: Add the user 'test'
+      ansible.builtin.user:
+        name: test
+        password: $6$3gX3RR9pLRJY5oEw$6XSJncRpy9eQMi.uonS5a66vrA8RxHAqVZfiF9O/IwcBG3XbIQGGxtud1o9Jq0PivdM3l3PaRw8GTBUFg0SAD0
+        #test
+        comment: user not in admin group
+        uid: 2002
+
+
+    - name: Allow SSH password authentication
+      lineinfile:
+        dest=/etc/ssh/sshd_config
+        regexp="^PasswordAuthentication"
+        line="PasswordAuthentication yes"
+        state=present
+      notify:
+        - restart sshd
+ 
+
+
+    - name: copy time.conf
+      template:
+        src: time.conf.j2
+        dest: "/etc/security/time.conf"
+
+
+    - name: Insert a new rule for pam_succeed_if
+      pamd:
+        name: '{{ item }}'
+        type: account
+        control: required
+        module_path: pam_nologin.so
+        new_type: account
+        new_control: '[default=ignore success=1]'
+        new_module_path: pam_succeed_if.so
+        module_arguments: user ingroup admin
+        state: after
+      loop:
+        - login
+        - sshd
+
+    - name: Insert a new rule for pam_time
+      pamd:
+        name: '{{ item }}'
+        type: account
+        control: '[default=ignore success=1]'
+        module_path: pam_succeed_if.so
+        new_type: account
+        new_control: required
+        new_module_path: pam_time.so
+        state: after
+      loop:
+        - login
+        - sshd
+
+
+
+  handlers:
+  - name: restart sshd
+    service: 
+      name=sshd
+      state=restarted
+  

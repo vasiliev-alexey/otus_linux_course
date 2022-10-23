@@ -17,4 +17,4 @@
 
 [13. Docker](13_docker/README.md)    <img src="https://www.svgrepo.com/show/349342/docker.svg" height="20"   alt="Ansible_logo">   
 [14. Настройка мониторинга](14_monitoring/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Prometheus_software_logo.svg" height="20"   alt="Prometheus">    <img src="https://www.vectorlogo.zone/logos/grafana/grafana-icon.svg" height="20"   alt="grafana">   
-
+[15. PAM](15_pam/README.md)    <img src="https://surepassid.com/wp-content/uploads/2020/07/pam-400x400-300x300-1.png" height="20"   alt="PAM">    
