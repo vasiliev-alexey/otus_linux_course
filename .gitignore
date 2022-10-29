@@ -4,3 +4,6 @@
 **/tmp/
 *.out
 *.vdi
+
+
+*/docs.md

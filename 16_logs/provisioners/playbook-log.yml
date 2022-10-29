@@ -1,0 +1,32 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+
+  tasks:
+    - name: provisioner info 
+      ansible.builtin.debug:
+        msg: "Hi otus -task 16 log-server"
+
+
+    - name: copy rsyslog.conf.j2
+      template:
+        src: rsyslog.conf.j2
+        dest: /etc/rsyslog.conf
+
+    - name: restart rsyslog service
+      service:
+        name: rsyslog
+        state: restarted
+ 
+    - name: copy rsyslog.conf.j2
+      template:
+        src: auditd.conf_server.j2
+        dest: /etc/audit/auditd.conf
+      notify:
+        - restart auditd
+
+  handlers:
+    - name: restart auditd 
+      command: service auditd restart        
