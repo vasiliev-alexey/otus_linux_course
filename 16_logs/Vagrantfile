@@ -1,0 +1,53 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+config.vm.define "web" do |web|
+    config.vm.box = "almalinux/8"
+    config.vm.box_version = "8.6.20221001"
+    config.vm.synced_folder ".", "/vagrant", type: "rsync"
+    config.ssh.insert_key = 'false'
+
+    web.vm.host_name = 'web'
+    web.vm.network :private_network, ip: "192.168.56.101"
+    web.vm.network "forwarded_port", guest: 8080, host: 8080
+
+
+    web.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.cpus = 2
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+  end
+   
+  web.vm.provision "ansible_local" do |ansible|
+    ansible.compatibility_mode = "2.0"
+    ansible.playbook = "provisioners/playbook-web.yml"
+    ansible.become = "true"
+  end
+
+
+  end
+
+
+  config.vm.define "log" do |log|
+    
+    config.vm.box = "almalinux/8"
+    config.vm.box_version = "8.6.20221001"
+    config.vm.synced_folder ".", "/vagrant", type: "rsync"
+
+    log.vm.network :private_network, ip: "192.168.56.102"
+    log.vm.provider :virtualbox do |vb|
+      vb.memory = "1024"
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+ 
+    log.vm.provision "ansible_local" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "provisioners/playbook-log.yml"
+      ansible.become = "true"
+    end
+ 
+  end
+
+end

@@ -1,0 +1,82 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+  vars:
+    NGINX_PORT: 8080
+    LOG_SRV_HOST: 192.168.56.102
+
+  tasks:
+    - name: Print return information from the previous task
+      ansible.builtin.debug:
+        msg: "Hi otus -task 16 "
+
+    - name: Install nginx
+      yum:
+        name: nginx
+        state: installed
+      notify: restart nginx   
+
+    - name: Install audit
+      yum:
+        name: audit
+        state: present
+
+
+    - name: Install audispd-plugins
+      yum:
+        name: audispd-plugins
+        state: latest
+
+    - name: Template nginx index page
+      template:
+        src: index.html.j2
+        dest: "/usr/share/nginx/html/index.html"
+      notify: restart nginx
+
+    - name: Template nginx default.conf
+      template:
+        src: default.conf.j2
+        dest: /etc/nginx/nginx.conf
+      notify: restart nginx
+
+    - name: copy audit.conf.j2
+      template:
+        src: auditd.conf.j2
+        dest: /etc/audit/auditd.conf
+      notify:
+        - restart auditd
+
+    - name: Replace variable
+      replace:
+        path: "/etc/audit/plugins.d/syslog.conf"
+        before: "direction = out"
+        regexp: "active = no"
+        replace: "active = yes"
+
+
+    - name: copy au-remote.conf.j2
+      template:
+        src: au-remote.conf.j2
+        dest: "/etc/audit/plugins.d/au-remote.conf"
+      notify:
+        - restart auditd
+
+    - name: copy auditsp_remote.conf.j2
+      template:
+        src: audisp-remote.conf.j2
+        dest: /etc/audit/audisp-remote.conf
+      notify:
+        - restart auditd
+
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+        enabled: true
+      register: restart_status
+      until: restart_status is succeeded
+    - name: restart auditd 
+      command: service auditd restart
