@@ -270,6 +270,7 @@ Oct 30 14:28:47 selinux-server systemd[1]: Started The nginx HTTP and reverse pr
 
  <summary markdown="span">Задание 2</summary>
 1. Поднимаем инфраструктуру
+   
 ```sh
 vagrant up
 ```
