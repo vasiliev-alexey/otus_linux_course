@@ -47,7 +47,7 @@
   - name: copy dynamic zone ddns.lab.view1
     copy:
       src: files/ns01/named.ddns.lab.view1
-      dest: /etc/named/dynamic/
+      dest: /var/named/dynamic/ #changed
       owner: named
       group: named
       mode: 0660

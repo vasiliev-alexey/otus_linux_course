@@ -266,6 +266,9 @@ Oct 30 14:28:47 selinux-server systemd[1]: Started The nginx HTTP and reverse pr
 </details>
 
 
+<details>
+
+ <summary markdown="span">Задание 2</summary>
 1. Поднимаем инфраструктуру
 ```sh
 vagrant up
@@ -346,5 +349,52 @@ drw-rwx---. root named unconfined_u:object_r:etc_t:s0   dynamic
 ```
 основной катлог конфигураций  /var/named
 
-6.  
+6.   Исправляем плейбук и конфиг
+   
+``` yml
+  - name: copy dynamic zone ddns.lab.view1
+    copy:
+      src: files/ns01/named.ddns.lab.view1
+      dest: /var/named/dynamic/ #changed
+      owner: named
+      group: named
+      mode: 0660
+```
 
+```js
+    zone "ddns.lab" {
+        type master;
+        allow-transfer { key "zonetransfer.key"; };
+        allow-update { key "zonetransfer.key"; };
+        file "/var/named/dynamic/named.ddns.lab.view1";# changed
+    };
+```
+
+7. Перезапускаем  provision
+```sh
+ vagrant provision --provision-with   ansible_local         
+```
+8.  Перестратовываем серис на ns01
+```sh
+systemctl restart named
+```
+9.  Идем на  client  и проверяем
+```sh
+[vagrant@client ~]$  nsupdate -k /etc/named.zonetransfer.key
+> server 192.168.50.10
+> zone ddns.lab
+>  update add www.ddns.lab. 60 A 192.168.50.15
+> send
+> quit
+[vagrant@client ~]$ ping www.ddns.lab
+PING www.ddns.lab (192.168.50.15) 56(84) bytes of data.
+64 bytes from web1.dns.lab (192.168.50.15): icmp_seq=1 ttl=64 time=0.012 ms
+```
+10.  Результат достигнут - запись в dns добавлена. хост резолвится
+
+![Решение 3](pict\4.png)
+
+</details>
+
+
+---
