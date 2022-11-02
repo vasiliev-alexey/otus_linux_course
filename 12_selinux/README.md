@@ -6,6 +6,9 @@
 
 ### Описание/Пошаговая инструкция выполнения домашнего задания:
 
+<details> 
+ <summary markdown="span">Задание 1</summary>
+
  1.  Запустить nginx на нестандартном порту 3-мя разными способами:
 
 *   переключатели setsebool;
@@ -259,3 +262,89 @@ Oct 30 14:28:47 selinux-server systemd[1]: Started The nginx HTTP and reverse pr
 ```
 
 ![Решение 3](pict\3.png)
+
+</details>
+
+
+1. Поднимаем инфраструктуру
+```sh
+vagrant up
+```
+2. Заходим на машину клиент и обновляем 
+``` sh 
+vssh client
+```
+``` sh
+ nsupdate -k /etc/named.zonetransfer.key
+    server 192.168.50.10
+    zone ddns.lab 
+    update add www.ddns.lab. 60 A 192.168.50.15
+    send
+```
+
+```sh
+[vagrant@client ~]$ nsupdate -k /etc/named.zonetransfer.key
+> server 192.168.50.10
+> zone ddns.lab 
+> update add www.ddns.lab. 60 A 192.168.50.15
+> send
+update failed: SERVFAIL
+```
+
+проверим  логи аудита на клиенте
+
+```sh
+sudo cat /var/log/audit/audit.log | audit2why
+# ответа нет - все ок
+```
+
+
+3. Дебажим сервер
+```sh
+vssh ns01
+```
+Шерстим аудит
+
+```sh
+[root@ns01 ~]#  cat /var/log/audit/audit.log | audit2why
+type=AVC msg=audit(1667377701.502:1254): avc:  denied  { search } for  pid=5005 comm="isc-worker0000" name="net" dev="proc" ino=7077 scontext=system_u:system_r:named_t:s0 tcontext=system_u:object_r:sysctl_net_t:s0 tclass=dir
+
+        Was caused by:
+                Missing type enforcement (TE) allow rule.
+
+                You can use audit2allow to generate a loadable module to allow this access.
+
+type=AVC msg=audit(1667377701.502:1255): avc:  denied  { search } for  pid=5005 comm="isc-worker0000" name="net" dev="proc" ino=7077 scontext=system_u:system_r:named_t:s0 tcontext=system_u:object_r:sysctl_net_t:s0 tclass=dir
+
+        Was caused by:
+                Missing type enforcement (TE) allow rule.
+
+                You can use audit2allow to generate a loadable module to allow this access.
+
+type=AVC msg=audit(1667378223.453:1268): avc:  denied  { create } for  pid=5005 comm="isc-worker0000" name="named.ddns.lab.view1.jnl" scontext=system_u:system_r:named_t:s0 tcontext=system_u:object_r:etc_t:s0 tclass=file
+```
+
+
+4.  Проблема в доступах процесса к каталогам типа etc_t
+
+```sh
+[root@ns01 ~]# ls -laZ /etc/named
+drw-rwx---. root named system_u:object_r:etc_t:s0       .
+drwxr-xr-x. root root  system_u:object_r:etc_t:s0       ..
+drw-rwx---. root named unconfined_u:object_r:etc_t:s0   dynamic
+-rw-rw----. root named system_u:object_r:etc_t:s0       named.50.168.192.rev
+-rw-rw----. root named system_u:object_r:etc_t:s0       named.dns.lab
+-rw-rw----. root named system_u:object_r:etc_t:s0       named.dns.lab.view1
+-rw-rw----. root named system_u:object_r:etc_t:s0       named.newdns.lab
+```
+
+5.  Проверим в каком каталоге по политке должны лежать файлы
+```sh
+[root@ns01 ~]# semanage fcontext -l | grep named
+/etc/rndc.*                                        regular file       system_u:object_r:named_conf_t:s0 
+/var/named(/.*)?                                   all files          system_u:object_r:named_zone_t:s0 
+```
+основной катлог конфигураций  /var/named
+
+6.  
+
