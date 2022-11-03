@@ -1,0 +1,55 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+config.vm.define "backup_server" do |backup_server|
+    config.vm.box = "almalinux/8"
+    config.vm.box_version = "8.6.20221001"
+    config.vm.synced_folder ".", "/vagrant", type: "rsync"
+    config.ssh.insert_key = 'false'
+
+    backup_server.vm.host_name = 'backup_server'
+    backup_server.vm.network :private_network, ip: "192.168.56.101"
+   # backup_server.vm.network "forwarded_port", guest: 8080, host: 8080
+
+
+    backup_server.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.cpus = 1
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+  end
+   
+  web.vm.provision "ansible_local" do |ansible|
+    ansible.compatibility_mode = "2.0"
+    ansible.playbook = "provisioners/playbook-backup.yml"
+    ansible.become = "true"
+  end
+
+
+  end
+
+
+  config.vm.define "client" do |client|
+    
+    config.vm.box = "almalinux/8"
+    config.vm.box_version = "8.6.20221001"
+    config.vm.synced_folder ".", "/vagrant", type: "rsync"
+
+    client.vm.host_name = 'client'
+    client.vm.network :private_network, ip: "192.168.56.102"
+    client.vm.provider :virtualbox do |vb|
+      vb.memory = "1024"
+      vb.cpus = 1
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    end
+ 
+    log.vm.provision "ansible_local" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "provisioners/playbook-client.yml"
+      ansible.become = "true"
+    end
+ 
+  end
+
+end

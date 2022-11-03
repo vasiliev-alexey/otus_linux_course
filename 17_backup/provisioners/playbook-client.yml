@@ -1,0 +1,12 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+
+
+  tasks:
+    - name: Print return information from the previous task
+      ansible.builtin.debug:
+        msg: "Hi otus - task 17 client"
+

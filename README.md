@@ -19,4 +19,4 @@
 [14. Настройка мониторинга](14_monitoring/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Prometheus_software_logo.svg" height="20"   alt="Prometheus">    <img src="https://www.vectorlogo.zone/logos/grafana/grafana-icon.svg" height="20"   alt="grafana">   
 [15. PAM](15_pam/README.md)    <img src="https://surepassid.com/wp-content/uploads/2020/07/pam-400x400-300x300-1.png" height="20"   alt="PAM">    
 [16. Настраиваем центральный сервер для сбора логов](16_logs/README.md)    <img src="https://img.icons8.com/external-sbts2018-outline-color-sbts2018/344/external-log-basic-ui-elements-2.2-sbts2018-outline-color-sbts2018.png" height="20"   alt="Ansible_logo">   
-
+[17. Настраиваем бэкапы](17_backup/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Iconoir_database-backup.svg/1024px-Iconoir_database-backup.svg.png" height="20"   alt="Backup_logo">  
