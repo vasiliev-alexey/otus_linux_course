@@ -25,7 +25,7 @@
 1. Создаем [стенд](Vagrantfile)
 2. [Устанвливаем пакеты, создаем пользователя](provisioners/playbook-common.yml)
 3. [Конфигурируем сервер бекапов](provisioners/playbook-backup.yml)
-4. [Конфигурируем клиента](provisioners/playbook-clien.yml)
+4. [Конфигурируем клиента](provisioners/playbook-client.yml)
  
 5. Проверяем
 
