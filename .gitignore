@@ -7,3 +7,6 @@
 
 
 */docs.md
+*/*.pdf
+.vscode/
+*.code-workspace
