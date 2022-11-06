@@ -126,7 +126,7 @@ Oct 30 13:03:55 selinux-server systemd[1]: Started The nginx HTTP and reverse pr
 setsebool -P nis_enabled off
 ```
 
-![dd](pict\1.png)
+![dd](pict/1.png)
 7. разрешим в SELinux работу nginx на порту TCP 4881 c помощью добавления нестандартного порта в имеющийся тип
 проверяем пул портов доступных для HTTP
 ```sh
@@ -179,7 +179,7 @@ Oct 30 13:40:51 selinux-server systemd[1]: Started The nginx HTTP and reverse pr
 [root@selinux-server vagrant]# semanage port -d -t http_port_t -p tcp 4881
 ```
 
-![dd](pict\2.png)
+![dd](pict/2.png)
 8. Разрешим в SELinux работу nginx на порту TCP 4881 c помощью формирования
 и установки модуля SELinux
 
@@ -261,7 +261,7 @@ Oct 30 14:28:47 selinux-server nginx[7896]: nginx: configuration file /etc/nginx
 Oct 30 14:28:47 selinux-server systemd[1]: Started The nginx HTTP and reverse proxy server.
 ```
 
-![Решение 3](pict\3.png)
+![Решение 3](pict/3.png)
 
 </details>
 
@@ -393,7 +393,7 @@ PING www.ddns.lab (192.168.50.15) 56(84) bytes of data.
 ```
 10.  Результат достигнут - запись в dns добавлена. хост резолвится
 
-![Решение 3](pict\4.png)
+![Решение 3](pict/4.png)
 
 </details>
 
