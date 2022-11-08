@@ -1,0 +1,44 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+  vars:
+    NGINX_PORT: 4881
+
+  tasks:
+    - name: Install nginx
+      yum:
+        name: nginx
+        state: installed
+      notify: restart nginx
+
+    - name: Install policycoreutils-python-utils
+      ansible.builtin.yum:
+        name: "{{ packages }}"
+      vars:
+        packages:
+        - policycoreutils-python-utils
+        - net-tools
+        
+    - name: Template nginx index page
+      template:
+        src: index.html.j2
+        dest: "/usr/share/nginx/html/index.html"
+      notify: restart nginx
+
+    - name: Template nginx default.conf
+      template:
+        src: default.conf.j2
+        dest: /etc/nginx/nginx.conf
+      notify: restart nginx
+
+
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+        enabled: true
+      register: restart_status
+      until: restart_status is succeeded
