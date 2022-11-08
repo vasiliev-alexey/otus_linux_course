@@ -1,0 +1,43 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+  vars: 
+    xfs_opts: defaults,auto,noatime,noexec
+    data_disk: /dev/sdb
+    data_path: /var/backup
+#    borg_user : borg
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: main
+
+    - name: provisioner info 
+      ansible.builtin.debug:
+        msg: "Hi otus -task 16 backup-server"
+
+
+    - name: Create Filesystem for additional disks
+      filesystem:
+        fstype: xfs
+        dev: '{{ item }}'
+      loop:
+        - '{{ data_disk }}'
+
+    - name: Mount Borg data disk
+      mount:
+        path: '{{ data_path }}'
+        src: '{{ data_disk }}'
+        fstype: xfs
+        state: mounted
+
+    - name: Prepare all additional mount points
+      file:
+        path: '{{ item }}'
+        state: directory
+        owner: '{{ borg_user }}'
+        group: '{{ borg_user }}'
+        mode: '0700'
+      loop:
+        - '{{ data_path }}'

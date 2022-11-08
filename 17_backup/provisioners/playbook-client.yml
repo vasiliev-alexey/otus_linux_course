@@ -1,0 +1,100 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+
+
+  tasks:
+    - name: Print return information from the previous task
+      ansible.builtin.debug:
+        msg: "Hi otus - task 17 client"
+
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: main
+
+    - name: Install pexpect
+      pip:
+        name: pexpect
+
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: main
+
+    - name: add sudo entry
+      lineinfile:
+        path: /etc/sudoers 
+        line: "{{ item.line }}"
+      with_items:
+          - { line: '{{ borg_user }} ALL=(ALL) NOPASSWD: ALL' }
+
+    - name: generate key pair
+      shell: ssh-keygen -b 2048 -t rsa -f /home/{{ borg_user }}/.ssh/id_rsa -q -N ""
+      args:
+        creates: /home/{{ borg_user }}/.ssh/id_rsa 
+
+
+    - name: create authorized_keys
+      file:
+        path: /home/{{ borg_user }}/.ssh/{{ item }}
+        state: touch
+        owner: '{{ borg_user }}'
+        group: '{{ borg_user }}'
+        mode: 0600
+      loop:
+        - id_rsa
+        - id_rsa.pub
+
+    - name: copy public key to backup:/home/borg/.ssh/authorized_keys
+      expect:
+        command: scp -o "StrictHostKeyChecking=no" /home/{{ borg_user }}/.ssh/id_rsa.pub borg@192.168.56.101:/home/borg/.ssh/authorized_keys
+        responses:
+          Are you sure you want to continue connecting (yes/no)?: "yes"
+          borg@192.168.56.101's password: "{{  borg_user_pass }}"
+
+ 
+    - name: init borg
+      become: yes
+      become_user: '{{ borg_user }}'
+      expect:
+        command: borg init --encryption=repokey {{  borg_user  }}@backup:/var/backup/
+        responses:
+          Are you sure you want to continue connecting (yes/no/[fingerprint])?: "yes"
+          (?i)Enter new passphrase: "{{  borg_user_pass  }}"
+          (?i)Enter same passphrase again: "{{  borg_user_pass  }}"
+          (?i)Do you want your passphrase to be displayed for verification?: "n"
+
+
+    - name: configure borg-backup.service
+      template:
+        src: borg-backup.service
+        dest: /etc/systemd/system/
+        owner: "root"
+        group: "root"
+        mode: '0644'
+       
+
+    - name: configure borg-backup.timer
+      template:
+        src: borg-backup.timer
+        dest: /etc/systemd/system/
+        owner: "root"
+        group: "root"
+        mode: '0644'       
+
+    - name: reload systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: borg-timer start service
+      systemd:
+        name: borg-backup.timer
+        enabled: yes
+        state: started         
+
+    - name: start & enable borg service
+      systemd:
+        name: borg-backup.service
+        enabled: yes  
+        state: started

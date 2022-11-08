@@ -4,5 +4,9 @@
 **/tmp/
 *.out
 *.vdi
-*.code-workspace
+
+
 */docs.md
+*/*.pdf
+.vscode/
+*.code-workspace
