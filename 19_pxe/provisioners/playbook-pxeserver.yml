@@ -1,0 +1,60 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+
+  tasks:
+    - name: provisioner info 
+      ansible.builtin.debug:
+        msg: "Hi otus -task  19 {{ inventory_hostname }}"
+
+    - name: Install a list of packages
+      ansible.builtin.yum:
+        name:
+          - wget
+          - epel-release
+          - httpd
+          - tftp-server
+          - dhcp-server          
+        state: present
+
+    - name: create folder for images
+      file:
+        path: "{{  item  }}"
+        state: directory
+        mode: 0755
+      loop:
+        - /images
+        - /iso
+
+    - name: Create a ext2 filesystem on /dev/sdb1
+      filesystem:
+        fstype: xfs
+        dev: /dev/sdb
+
+    - name: mount /dev/sdb to /images
+      mount:
+        path: /images
+        src: /dev/sdb
+        state: mounted
+        fstype: xfs
+
+    - name: make xfs on sdb
+      filesystem:
+        dev: /dev/sdc
+        fstype: xfs
+
+    - name: mount /dev/sdb to /images
+      mount:
+        path: /iso
+        src: /dev/sdc
+        state: mounted
+        fstype: xfs
+
+    - name: Change file ownership, group and permissions
+      ansible.builtin.file:
+        path: /iso
+        owner: vagrant
+        group: vagrant
+        mode: '0644'        
