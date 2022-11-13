@@ -1,0 +1,29 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+  tasks:
+    - name: provisioner info
+      ansible.builtin.debug:
+        msg: "Hi otus -task 18  {{ inventory_hostname }}"
+
+    - name: add default gateway for centralRouter
+      lineinfile:
+        dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+        line: GATEWAY=192.168.0.1
+      notify:
+        - restart network
+
+    - name: add routes
+      template:
+        src: "centralServer/{{  item  }}"
+        dest: /etc/sysconfig/network-scripts/
+      loop:
+        - route-eth1
+
+  handlers:
+    - name: restart network
+      service:
+        name: network
+        state: restarted
