@@ -14,11 +14,11 @@
 [9. Bash](09_bash/README.md)  <img src="https://raw.githubusercontent.com/gilbarbara/logos/master/logos/bash-icon.svg" height="20"   alt="bash">   
 [10. Процессы](10_process/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f5/Noun_Project_process_icon_2519390.svg" height="20"   alt="bash">   
 [11. Первые шаги с Ansible](11_ansible/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Ansible_logo.svg/256px-Ansible_logo.svg.png?20210414073712" height="20"   alt="Ansible_logo">    
-
+[12. Практика с SELinux](12_selinux/README.md)    <img src="https://avatars.githubusercontent.com/u/7838867?s=200&v=4" height="20"   alt="SELinux logo">    
 [13. Docker](13_docker/README.md)    <img src="https://www.svgrepo.com/show/349342/docker.svg" height="20"   alt="Ansible_logo">   
 [14. Настройка мониторинга](14_monitoring/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Prometheus_software_logo.svg" height="20"   alt="Prometheus">    <img src="https://www.vectorlogo.zone/logos/grafana/grafana-icon.svg" height="20"   alt="grafana">   
 [15. PAM](15_pam/README.md)    <img src="https://surepassid.com/wp-content/uploads/2020/07/pam-400x400-300x300-1.png" height="20"   alt="PAM">    
 [16. Настраиваем центральный сервер для сбора логов](16_logs/README.md)    <img src="https://img.icons8.com/external-sbts2018-outline-color-sbts2018/344/external-log-basic-ui-elements-2.2-sbts2018-outline-color-sbts2018.png" height="20"   alt="Ansible_logo">   
-
+[17. Настраиваем бэкапы](17_backup/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Iconoir_database-backup.svg/1024px-Iconoir_database-backup.svg.png" height="20"   alt="Backup_logo">  
 [18. Разворачиваем сетевую лабораторию](18_network/README.md)    <img src="https://freesvg.org/img/lukas-Redundant-network-routers-and-switches.png" height="20"   alt="Ansible_logo">   
 

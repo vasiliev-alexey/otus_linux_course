@@ -1,0 +1,74 @@
+---
+- name: Common tasks for servers
+  hosts: all
+  become: true
+
+#  vars: 
+#    borg_user : borg
+
+  tasks:
+ 
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: main
+
+    - name: Print return information from the previous task
+      ansible.builtin.debug:
+        msg: "Hi otus - task 17 common"
+
+
+    - name: Install support packages
+      ansible.builtin.dnf:
+        name:
+          - langpacks-en
+          - glibc-all-langpacks
+          - epel-release
+          - python3-pip
+        state: latest
+
+# mdify repo  settings for borg 
+# https://almalinux.discourse.group/t/package-deb-issue-cant-update-reinstall-borgbackup/494
+    - name: "Run {{ item }}"
+      command: "{{ item }}"
+      loop:
+        - dnf config-manager --set-enabled epel
+        - dnf config-manager --set-enabled powertools 
+
+    - name: Install the latest version ofborgbackup
+      ansible.builtin.dnf:
+        name:
+          - borgbackup
+        state: latest
+
+    - name: Setup Host File
+      template:
+        src: hosts.j2
+        dest: /etc/hosts
+        owner: root
+        group: root
+        mode: '0644'
+      poll: 0
+
+    - name: Add the user 'borg'
+      ansible.builtin.user:
+        name: '{{ borg_user }}'
+        password: $6$v6mrPxzTp8B7VCA2$54bOBLYCMJNxThl/Fqj0Wr/gnPaiI3BDbUFF.JsFNe1J5cBr6rTqeu9hKRsOf5bSbY/PXjrisrzsfS9.P5u3f0
+        #borg
+        comment: user borg
+
+    - name: create /home/{{ borg_user }}/.ssh dir
+      file:
+        path:  /home/{{ borg_user }}/.ssh
+        state: directory
+        owner: '{{ borg_user }}'
+        group: '{{ borg_user }}'
+        mode: 0700      
+
+    - name: create authorized_keys
+      file:
+        path: /home/{{ borg_user }}/.ssh/authorized_keys
+        state: touch
+        owner: '{{ borg_user }}'
+        group: '{{ borg_user }}'
+        mode: 0600
+
