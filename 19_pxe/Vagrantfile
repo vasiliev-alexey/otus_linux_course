@@ -6,8 +6,8 @@ Vagrant.configure('2') do |config|
 
     config.vm.define "pxeserver" do |server|
       server.vm.box = 'almalinux/8'
-      server.vm.box_version = "8.6.20221001"
-  
+      #server.vm.box_version = "8.6.20221001"
+      server.vm.synced_folder ".", "/vagrant", type: "rsync"
       server.vm.disk :disk, size: "15GB", name: "extra_storage1"
       server.vm.disk :disk, size: "15GB", name: "extra_storage2"
       server.vm.host_name = 'pxeserver'
@@ -23,13 +23,14 @@ Vagrant.configure('2') do |config|
 
       server.vm.provision "shell", run: "up", inline: <<-SHELL
       sudo dnf install ansible-core -y
-      ansible-galaxy collection install community.general
-      ansible-galaxy collection install ansible.posix
       SHELL
   
 
       server.vm.provision "ansible_local" do |ansible|
-        ansible.compatibility_mode = "2.0"
+        #ansible.compatibility_mode = "2.0"
+        ansible.galaxy_role_file = "provisioners/requirements.yml"
+        ansible.galaxy_command = "ansible-galaxy collection install -fr  %{role_file} "
+        ansible.galaxy_roles_path = '/etc/ansible/roles'
         ansible.playbook = "provisioners/playbook-pxeserver.yml"
         ansible.become = "true"
       end      
