@@ -16,11 +16,30 @@
 
 
 ---
+### Решение
 
-1. Скачиваем образ заранее
-```sh
-wget https://mirror.sale-dedic.com/centos/8.4.2105/isos/x86_64/CentOS-8.4.2105-x86_6
-4-dvd1.iso
-```
+1. Скачиваем образ заранее  и помещаем  его в диреторию проекта
+    ```sh
+    http://ftp.unicamp.br/pub/centos/8.4.2105/isos/x86_64/CentOS-8.4.2105-x86_64-dvd1.iso
+    ```
 
-2. 
+2. Создаем [инфраструктуру](Vagrantfile)
+3. Создаем [ansible playbook для PXEServer](provisioners/playbook-pxeserver.yml)
+
+4. проверяем результат
+
+* поднимаем PXE сервер   
+    ```sh
+    vagrant up pxeserver
+    ``` 
+
+* ожидаем пока прокаиться playbook
+
+* поднимаем клиента
+    ```sh
+    vagrant up pxeclient
+    ``` 
+
+Получаем наше меню загрузуи по PXE
+
+![Получаем наше меню загрузуи по PXE](img/Screenshot%20from%202022-11-15%2020-59-22.png)
