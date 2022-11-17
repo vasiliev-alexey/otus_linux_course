@@ -1,0 +1,29 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install traceroute
+      yum:
+        name: traceroute
+        state: present
+
+    - name: set up forward packages across routers
+      sysctl:
+        name: net.ipv4.conf.all.forwarding
+        value: "1"
+        state: present
+      when: (ansible_hostname == "centralRouter") or
+        (ansible_hostname == "inetRouter")  
+    - name: disable default route
+      lineinfile:
+        dest: /etc/sysconfig/network-scripts/ifcfg-eth0
+        line: DEFROUTE=no
+      when: (ansible_hostname == "centralRouter") or
+        (ansible_hostname == "centralServer") 
+  handlers:
+    - name: restart network
+      service:
+        name: network
+        state: restarted

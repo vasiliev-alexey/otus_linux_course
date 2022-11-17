@@ -22,3 +22,4 @@
 [17. Настраиваем бэкапы](17_backup/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Iconoir_database-backup.svg/1024px-Iconoir_database-backup.svg.png" height="20"   alt="Backup_logo">  
 [18. Разворачиваем сетевую лабораторию](18_network/README.md)    <img src="https://freesvg.org/img/lukas-Redundant-network-routers-and-switches.png" height="20"   alt="Ansible_logo">   
 
+[20. Сценарии iptables](20_iptables/README.md)    <img src="https://upload.wikimedia.org/wikipedia/ru/thumb/f/f4/Iptables-traversal.svg/85px-Iptables-traversal.svg.png?20090709045750" height="20"   alt="Ansible_logo">   
