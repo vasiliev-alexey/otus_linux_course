@@ -50,7 +50,10 @@ Vagrant.configure("2") do |config|
         SHELL
  
         box.vm.provision "ansible_local" do |ansible|
-          ansible.compatibility_mode = "2.0"
+         ansible.galaxy_role_file = "provisioners/requirements.yml"
+         ansible.galaxy_command = "ansible-galaxy collection install -fr  %{role_file} "
+         ansible.galaxy_roles_path = '/etc/ansible/roles'
+
           ansible.playbook = "provisioners/common.yml"
           ansible.become = "true"
         end        

@@ -10,9 +10,7 @@
 
     - name: install iptables service
       yum:
-        name:
-          - iptables
-          - iptables-services
+        name: [ 'iptables', 'iptables-services', 'firewalld']
         state: present
         update_cache: true
 
@@ -38,6 +36,20 @@
         name: iptables
         state: restarted
         enabled: true
+
+    - name: "firewall-cmd --zone=external --change-interface=eth0 --permanent"
+      ansible.posix.firewalld:
+        zone: external
+        interface: eth0
+        permanent: yes
+        state: enabled
+
+    - name: "firewall-cmd --zone=external --change-interface=eth2 --permanent"
+      ansible.posix.firewalld:
+        zone: external
+        interface: eth2
+        permanent: yes
+        state: enabled
 
   handlers:
     - name: restart network
