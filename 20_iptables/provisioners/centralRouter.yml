@@ -21,7 +21,7 @@
         dest: /etc/sysconfig/network-scripts/
       loop:
         - route-eth1
-        # - route-eth5
+        - route-eth3
         # - route-eth6
       notify:
         - restart network

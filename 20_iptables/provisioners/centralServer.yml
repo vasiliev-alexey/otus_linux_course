@@ -22,8 +22,35 @@
       loop:
         - route-eth1
 
+
+    - name: Template nginx index page
+      template:
+        src: "centralServer/index.html.j2"
+        dest: "/usr/share/nginx/html/index.html"
+      notify: restart nginx
+
+    - name: Template nginx default.conf
+      template:
+        src: "centralServer/default.conf.j2"
+        dest: /etc/nginx/nginx.conf
+      notify: restart nginx
+
+
+    - name: start_nginx
+      service:
+        name: nginx 
+        state: started
+        enabled: yes
+
   handlers:
     - name: restart network
       service:
         name: network
         state: restarted
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+        enabled: true
+      register: restart_status
+      until: restart_status is succeeded

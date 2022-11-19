@@ -9,6 +9,11 @@
         name: traceroute
         state: present
 
+    - name: Install nginx
+      yum:
+        name: nginx
+        state: present
+      when: (ansible_hostname == "centralServer")
 
     - name: install knock-client
       yum:
@@ -28,13 +33,15 @@
         value: "1"
         state: present
       when: (ansible_hostname == "centralRouter") or
-        (ansible_hostname == "inetRouter")  
+        (ansible_hostname == "inetRouter")  or
+        (ansible_hostname == "inetRouter2")  
     - name: disable default route
       lineinfile:
         dest: /etc/sysconfig/network-scripts/ifcfg-eth0
         line: DEFROUTE=no
       when: (ansible_hostname == "centralRouter") or
-        (ansible_hostname == "centralServer") 
+        (ansible_hostname == "centralServer")  or
+        (ansible_hostname == "inetRouter2")  
   handlers:
     - name: restart network
       service:
