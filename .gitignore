@@ -10,3 +10,4 @@
 */*.pdf
 .vscode/
 *.code-workspace
+*.iso
