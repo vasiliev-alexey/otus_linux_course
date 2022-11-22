@@ -1,0 +1,66 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+# export VAGRANT_EXPERIMENTAL="disks"
+
+Vagrant.configure('2') do |config|
+
+    config.vm.define "pxeserver" do |server|
+      server.vm.box = 'almalinux/8'
+      #server.vm.box_version = "8.6.20221001"
+      server.vm.synced_folder ".", "/vagrant", type: "rsync"
+      server.vm.disk :disk, size: "15GB", name: "extra_storage1"
+      server.vm.disk :disk, size: "15GB", name: "extra_storage2"
+      server.vm.host_name = 'pxeserver'
+      server.vm.network :private_network, ip: "10.0.0.20", virtualbox__intnet: 'pxenet'
+      server.vm.network :private_network, ip: "192.168.50.20"
+      server.vm.network "forwarded_port", guest: 80, host: 8081
+  
+      server.vm.provider "virtualbox" do |vb|
+        vb.memory = "2048"
+        vb.cpus = "3"
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      end
+
+      server.vm.provision "shell", run: "up", inline: <<-SHELL
+      sudo dnf install ansible-core -y
+      SHELL
+  
+
+      server.vm.provision "ansible_local" do |ansible|
+        #ansible.compatibility_mode = "2.0"
+        ansible.galaxy_role_file = "provisioners/requirements.yml"
+        ansible.galaxy_command = "ansible-galaxy collection install -fr  %{role_file} "
+        ansible.galaxy_roles_path = '/etc/ansible/roles'
+      #  ansible.verbose = "vvv"
+        ansible.playbook = "provisioners/playbook-pxeserver.yml"
+        ansible.become = "true"
+      end      
+
+    end
+  
+    config.vm.define "pxeclient" do |pxeclient|
+    #   pxeclient.vm.box = 'centos/8.4'
+      pxeclient.vm.box = 'almalinux/8'
+      pxeclient.vm.box_version = "8.6.20221001"
+  
+      pxeclient.vm.host_name = 'pxeclient'
+      pxeclient.vm.network :private_network, ip: "10.0.0.21"
+      pxeclient.vm.boot_timeout = 5
+      pxeclient.vm.provider :virtualbox do |vb|
+        vb.memory = "2048"
+        vb.cpus = "3"
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        vb.customize [
+          'modifyvm', :id,
+          '--nic1', 'intnet',
+          '--intnet1', 'pxenet',
+          '--nic2', 'nat',
+          '--boot1', 'net',
+          '--boot2', 'none',
+          '--boot3', 'none',
+          '--boot4', 'none'
+        ]
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      end
+    end
+  end

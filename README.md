@@ -21,4 +21,6 @@
 [16. Настраиваем центральный сервер для сбора логов](16_logs/README.md)    <img src="https://img.icons8.com/external-sbts2018-outline-color-sbts2018/344/external-log-basic-ui-elements-2.2-sbts2018-outline-color-sbts2018.png" height="20"   alt="Ansible_logo">   
 [17. Настраиваем бэкапы](17_backup/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Iconoir_database-backup.svg/1024px-Iconoir_database-backup.svg.png" height="20"   alt="Backup_logo">  
 [18. Разворачиваем сетевую лабораторию](18_network/README.md)    <img src="https://freesvg.org/img/lukas-Redundant-network-routers-and-switches.png" height="20"   alt="Ansible_logo">   
+[19. Настройка PXE сервера для автоматической установки](19_pxe/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/PXE_Text_Boot_Menu.png" height="20"   alt="PXE_logo">  
+
 
