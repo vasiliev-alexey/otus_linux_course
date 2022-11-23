@@ -1,0 +1,61 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+  tasks:
+    - name: provisioner info
+      ansible.builtin.debug:
+        msg: "Hi otus -task 20  {{ inventory_hostname }}"
+ 
+    - name: start firewalld
+      service:
+        name: firewalld
+        enabled: yes
+        state: started
+
+    - name: add routes
+      template:
+        src: 'inetRouter2/{{  item  }}'
+        dest: /etc/sysconfig/network-scripts/
+      loop:
+        - route-eth1
+
+    - name: restart_networking
+      ansible.builtin.service:
+        name: network
+        state: restarted
+
+
+
+    - name: add forwarding to firewalld
+      shell: |
+        firewall-cmd --zone=external --change-interface=eth0 --permanent
+        firewall-cmd --zone=external --change-interface=eth1 --permanent
+        firewall-cmd --direct --permanent --add-rule ipv4 nat POSTROUTING 0 -o eth0 -j MASQUERADE
+        firewall-cmd --direct --permanent --add-rule ipv4 filter FORWARD 0 -i eth1 -o eth0 -j ACCEPT
+        firewall-cmd --direct --permanent --add-rule ipv4 filter FORWARD 0 -i eth0 -o eth1 -m state --state RELATED,ESTABLISHED -j ACCEPT
+        #firewall-cmd --zone=external --add-forward-port=port=8080:proto=tcp:toport=80:toaddr=192.168.0.2 --permanent
+        firewall-cmd --reload
+
+    - name: listen port 8080
+      firewalld:
+        port: 8080/tcp
+        zone: external
+        permanent: true
+        immediate: true
+        state: enabled
+
+
+    - name: Redirect port 8080 to 192.168.0.2:80
+      firewalld:
+        rich_rule: rule family=ipv4 forward-port port=8080 protocol=tcp to-port=80 to-addr=192.168.0.2
+        zone: '{{  item  }}'
+        permanent: true
+        immediate: true
+        state:     enabled
+      loop:
+        - external
+
+    - name: enable masquerade
+      shell: firewall-cmd --zone=public --add-masquerade --permanent

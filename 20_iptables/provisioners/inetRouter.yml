@@ -1,0 +1,110 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+  tasks:
+    - name: provisioner info
+      ansible.builtin.debug:
+        msg: "Hi otus -task 20  {{ inventory_hostname }}"
+
+    - name: install iptables service
+      yum:
+        name: ["iptables", "iptables-services", "firewalld"]
+        state: present
+        update_cache: true
+
+    - name: copy iptables config to InetRouter
+      template:
+        src: inetRouter/internetRouter.iptables.conf.j2
+        dest: /etc/sysconfig/iptables
+        owner: root
+        group: root
+        mode: 0600
+
+    - name: add routes
+      template:
+        src: "inetRouter/{{  item  }}"
+        dest: /etc/sysconfig/network-scripts/
+      loop:
+        - route-eth1
+      notify:
+        - restart network
+
+    - name: start and enable iptables service
+      service:
+        name: iptables
+        state: restarted
+        enabled: true
+
+    - name: start and enable firewalld service
+      service:
+        name: firewalld
+        state: restarted
+        enabled: true
+
+    - name: add forwarding to firewalld
+      shell: |
+          firewall-cmd --zone=external --change-interface=eth0 --permanent
+          firewall-cmd --zone=external --change-interface=eth2 --permanent
+          firewall-cmd --direct --permanent --add-rule ipv4 nat POSTROUTING 0 -o eth0 -j MASQUERADE
+          firewall-cmd --direct --permanent --add-rule ipv4 filter FORWARD 0 -i eth1 -o eth0 -j ACCEPT
+          firewall-cmd --direct --permanent --add-rule ipv4 filter FORWARD 0 -i eth0 -o eth1 -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+    - name: copy knock conf
+      template:
+        src: "inetRouter/knockd.conf"
+        dest: /etc/knockd.conf
+
+    - name: start knockd
+      service:
+        name: knockd
+        state: started
+        enabled: yes
+
+    - name: copy knockd conf
+      template:
+        src: "inetRouter/knockd"
+        dest: /etc/sysconfig/knockd
+
+    - name: start knockd
+      service:
+        name: knockd
+        state: restarted
+        enabled: yes
+
+    - name: allow ssh-connect by password
+      replace:
+        path: /etc/ssh/sshd_config
+        regexp: 'PasswordAuthentication no'
+        replace: 'PasswordAuthentication yes'
+
+
+    - name: open knockd ports
+      firewalld:
+        port: "{{  item  }}"
+        permanent: yes
+        state: enabled
+      loop:
+        - 8888/tcp
+        - 7777/tcp
+        - 6666/tcp
+
+    - name: deny ssh for default (public) zone
+      firewalld:
+        zone: public
+        service: ssh
+        state: disabled
+        permanent: yes
+
+
+    - name: restart_sshd
+      ansible.builtin.service:
+        name: sshd
+        state: restarted
+
+  handlers:
+    - name: restart network
+      service:
+        name: network
+        state: restarted

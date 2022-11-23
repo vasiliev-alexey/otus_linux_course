@@ -24,3 +24,4 @@
 [19. Настройка PXE сервера для автоматической установки](19_pxe/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/PXE_Text_Boot_Menu.png" height="20"   alt="PXE_logo">  
 
 
+[20. Сценарии iptables](20_iptables/README.md)    <img src="https://upload.wikimedia.org/wikipedia/ru/thumb/f/f4/Iptables-traversal.svg/85px-Iptables-traversal.svg.png?20090709045750" height="20"   alt="Ansible_logo">   
