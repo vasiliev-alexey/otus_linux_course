@@ -1,0 +1,40 @@
+frr version 8.1   
+frr defaults traditional
+hostname {{ ansible_hostname }}
+log syslog informational
+no ipv6 forwarding
+service integrated-vtysh-config
+
+interface enp0s8
+description {% if router_id_enable == false %}{% endif %}{{ description_1 }}
+ip address {% if router_id_enable == false %}{% endif %}{{ ip_1 }}
+ip ospf mtu-ignore
+{% if ansible_hostname == 'router1' %}ip ospf cost 1000{% elif ansible_hostname == 'router2' and symmetric_routing == true %}ip ospf cost 1000{% else %}!ip ospf cost 450{% endif %} 
+ip ospf hello-interval 10
+ip ospf dead-interval 30
+
+interface enp0s9
+description {% if router_id_enable == false %}{% endif %}{{ description_2 }}
+ip address {% if router_id_enable == false %}{% endif %}{{ ip_2 }}
+ip ospf mtu-ignore
+!ip ospf cost 45
+ip ospf hello-interval 10
+ip ospf dead-interval 30
+
+interface enp0s10
+description {% if router_id_enable == false %}{% endif %}{{ description_3 }}
+ip address {% if router_id_enable == false %}{% endif %}{{ ip_3 }}
+ip ospf mtu-ignore
+!ip ospf cost 45
+ip ospf hello-interval 10
+ip ospf dead-interval 30
+
+router ospf
+router-id {% if router_id_enable == false %}{% endif %}{{ router_id }}
+network {% if router_id_enable == false %}{% endif %}{{ network_1 }} area 0
+network {% if router_id_enable == false %}{% endif %}{{ network_2 }} area 0
+network {% if router_id_enable == false %}{% endif %}{{ network_3 }} area 0
+neighbor {% if router_id_enable == false %}{% endif %}{{ neighbor_1 }} area 0
+neighbor {% if router_id_enable == false %}{% endif %}{{ neighbor_2 }} area 0
+log file /var/log/frr/frr.log
+default-information originate always
