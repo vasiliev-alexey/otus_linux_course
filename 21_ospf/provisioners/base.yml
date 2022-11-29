@@ -4,8 +4,8 @@
   become: true
 
   vars:
-    router_id_enable: false
-    symmetric_routing: empty
+    # router_id_enable: false
+    # symmetric_routing: empty
 
 
   tasks:
