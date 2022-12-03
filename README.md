@@ -25,3 +25,4 @@
 
 
 [20. Сценарии iptables](20_iptables/README.md)    <img src="https://upload.wikimedia.org/wikipedia/ru/thumb/f/f4/Iptables-traversal.svg/85px-Iptables-traversal.svg.png?20090709045750" height="20"   alt="Ansible_logo">   
+[23. Dns](23_dns/README.md)    <img src="https://img.icons8.com/officel/512/dns.png" height="20"   alt="Ansible_logo">   
