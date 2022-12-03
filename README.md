@@ -22,7 +22,7 @@
 [17. Настраиваем бэкапы](17_backup/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Iconoir_database-backup.svg/1024px-Iconoir_database-backup.svg.png" height="20"   alt="Backup_logo">  
 [18. Разворачиваем сетевую лабораторию](18_network/README.md)    <img src="https://freesvg.org/img/lukas-Redundant-network-routers-and-switches.png" height="20"   alt="Ansible_logo">   
 [19. Настройка PXE сервера для автоматической установки](19_pxe/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/PXE_Text_Boot_Menu.png" height="20"   alt="PXE_logo">  
-
-
 [20. Сценарии iptables](20_iptables/README.md)    <img src="https://upload.wikimedia.org/wikipedia/ru/thumb/f/f4/Iptables-traversal.svg/85px-Iptables-traversal.svg.png?20090709045750" height="20"   alt="Ansible_logo">   
+[21. OSPF](21_ospf/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/OSPF_Network.svg" height="20"   alt="Ansible_logo">   
+
 [23. Dns](23_dns/README.md)    <img src="https://img.icons8.com/officel/512/dns.png" height="20"   alt="Ansible_logo">   
