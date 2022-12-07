@@ -1,0 +1,34 @@
+---
+- name: Otus ansible
+  hosts: client,client2
+  become: true
+
+
+  tasks:
+    - name: provisioner info 
+      ansible.builtin.debug:
+        msg: "Test task 23: {{ inventory_hostname }}"
+
+    - name: '{{ inventory_hostname }} ping to www.newdns.lab zone'
+      shell: ping -c 4 www.newdns.lab 2>&1
+      register: ping_2_www_newdns_lab
+      ignore_errors: yes
+
+    - name: '{{ inventory_hostname }} ping to web1.dns.lab zone'
+      shell: ping -c 4 web1.dns.lab 2>&1
+      register: ping_2_web1_dns_lab
+      ignore_errors: yes
+
+    - name: '{{ inventory_hostname }} ping to web2.dns.lab zone'
+      shell: ping -c 4 web2.dns.lab 2>&1
+      register: ping_2_web2_dns_lab
+      ignore_errors: yes
+
+    - name: '{{ inventory_hostname }}  show result of ping to www.newdns.lab zone'
+      debug: msg="{{ ping_2_www_newdns_lab.stdout_lines }}"
+
+    - name: c'{{ inventory_hostname }}  show result of ping to web1.dns.lab zone'
+      debug: msg="{{ ping_2_web1_dns_lab.stdout_lines }}"
+
+    - name: '{{ inventory_hostname }}  show result of ping to web2.dns.lab zone'
+      debug: msg="{{ ping_2_web2_dns_lab.stdout_lines}}"
