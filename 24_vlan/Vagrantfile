@@ -1,0 +1,87 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+MACHINES = {
+:inetRouter => {
+        :box_name => "centos/7",
+         :net => [
+                 {ip: '192.168.255.1', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "router-net"},
+                ]
+  },
+  :centralRouter => {
+        :box_name => "centos/7",
+        :net => [
+            {ip: '192.168.255.2', adapter: 2, netmask: "255.255.255.252", virtualbox__intnet: "router-net"},
+            {ip: '192.168.0.1',   adapter: 3, netmask: "255.255.255.240", virtualbox__intnet: "dir-net"},
+            {ip: '192.168.0.33',  adapter: 4, netmask: "255.255.255.240", virtualbox__intnet: "hw-net"},
+            {ip: '192.168.0.65',  adapter: 5, netmask: "255.255.255.192", virtualbox__intnet: "mgt-net"},
+            {ip: '192.168.255.5', adapter: 6, netmask: "255.255.255.252", virtualbox__intnet: "office2-central"},
+            {ip: '192.168.255.9', adapter: 7, netmask: "255.255.255.252", virtualbox__intnet: "office1-central"},
+            ]
+  },  
+  :testServer1 => {
+    :box_name => "centos/7", 
+    :net => [
+            {ip: '192.168.2.131', adapter: 2, netmask: "255.255.255.192",virtualbox__intnet: "managers-net"},
+            ]
+  },
+  :testServer2 => {
+    :box_name => "centos/7", 
+    :net => [
+            {ip: '192.168.2.132', adapter: 2, netmask: "255.255.255.192",virtualbox__intnet: "managers-net"},
+            ]
+  },
+  :testClient1 => {
+    :box_name => "centos/7", 
+    :net => [
+            {ip: '192.168.2.133', adapter: 2, netmask: "255.255.255.192",virtualbox__intnet: "managers-net"},
+            ]
+  },
+  :testClient2 => {
+    :box_name => "centos/7", 
+    :net => [
+            {ip: '192.168.2.134', adapter: 2, netmask: "255.255.255.192",virtualbox__intnet: "managers-net"},
+            ]
+  },
+}
+
+Vagrant.configure("2") do |config|
+
+  MACHINES.each do |boxname, boxconfig|
+
+    config.vm.define boxname do |box|
+
+        box.vm.box = boxconfig[:box_name]
+        box.vm.host_name = boxname.to_s
+        box.vm.synced_folder ".", "/vagrant", type: "rsync"
+
+        boxconfig[:net].each do |ipconf|
+          box.vm.network "private_network", ipconf
+        end
+        
+        if boxconfig.key?(:public)
+          box.vm.network "public_network", boxconfig[:public]
+        end
+
+        box.vm.provision "shell", inline: <<-SHELL
+          mkdir -p ~root/.ssh
+                cp ~vagrant/.ssh/auth* ~root/.ssh
+        SHELL
+ 
+        box.vm.provision "ansible_local" do |ansible|
+          ansible.compatibility_mode = "2.0"
+          ansible.playbook = "provisioners/common.yml"
+          ansible.become = "true"
+        end        
+        
+        box.vm.provision "ansible_local" do |ansible|
+          ansible.compatibility_mode = "2.0"
+          ansible.playbook = "provisioners/#{boxname.to_s}.yml"
+          ansible.become = "true"
+        end
+
+        if boxconfig.key?(:public)
+          box.vm.network "public_network", boxconfig[:public]
+        end 
+      end
+  end
+end

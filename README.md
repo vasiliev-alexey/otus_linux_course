@@ -26,3 +26,4 @@
 [21. OSPF](21_ospf/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/OSPF_Network.svg" height="20"   alt="Ansible_logo">   
 
 [23. Dns](23_dns/README.md)    <img src="https://img.icons8.com/officel/512/dns.png" height="20"   alt="Ansible_logo">   
+[24. Строим бонды и вланы](24_vlan/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/8/85/VLAN_virtual_network_interfaces.svg" height="20"   alt="Ansible_logo">   
