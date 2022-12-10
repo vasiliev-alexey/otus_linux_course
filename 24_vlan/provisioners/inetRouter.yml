@@ -39,6 +39,21 @@
         state: restarted
         enabled: true
 
+    - name: set bond config
+      copy:
+        src: "{{ inventory_hostname }}/{{ item }}"
+        dest: /etc/sysconfig/network-scripts/
+        owner: root
+        group: root
+        mode: 644
+      loop:
+        - ifcfg-bond0
+        - ifcfg-eth1
+        - ifcfg-eth2
+      notify:
+        - restart network
+
+
   handlers:
     - name: restart network
       service:
