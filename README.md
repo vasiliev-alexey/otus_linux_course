@@ -24,5 +24,5 @@
 [19. Настройка PXE сервера для автоматической установки](19_pxe/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/PXE_Text_Boot_Menu.png" height="20"   alt="PXE_logo">  
 [20. Сценарии iptables](20_iptables/README.md)    <img src="https://upload.wikimedia.org/wikipedia/ru/thumb/f/f4/Iptables-traversal.svg/85px-Iptables-traversal.svg.png?20090709045750" height="20"   alt="Ansible_logo">   
 [21. OSPF](21_ospf/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/OSPF_Network.svg" height="20"   alt="Ansible_logo">   
-
-[23. Dns](23_dns/README.md)    <img src="https://img.icons8.com/officel/512/dns.png" height="20"   alt="Ansible_logo">   
+[22. VPN](22_vpn/README.md)    <img src="https://cdn.worldvectorlogo.com/logos/openvpn-2.svg" height="20"   alt="vpn_logo">   
+[23. Dns](23_dns/README.md)    <img src="https://img.icons8.com/officel/512/dns.png" height="20"   alt="Dbs_logo">   

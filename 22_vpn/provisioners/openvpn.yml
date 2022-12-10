@@ -1,0 +1,70 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+  tasks:
+
+    - name: copy iptables config to InetRouter
+      copy:
+        src: static.key
+        dest: /etc/openvpn/static.key
+        owner: root
+        group: root
+        mode: 0600
+
+
+    - name: copy iptables config to InetRouter
+      copy:
+        src: static.key
+        dest: /etc/openvpn/static.key
+        owner: root
+        group: root
+        mode: 0600
+
+
+    - name:  Configure OpenVPN
+      template:
+        src: opvpncon.j2
+        dest: "/etc/openvpn/{{ ansible_hostname }}.conf"
+
+    - name: OpenVPN service restart
+      service:
+        name: "openvpn@{{ ansible_hostname }}"
+        state: restarted
+        enabled: true
+  
+    - name:  Ping to OpenVPN Server
+      block:
+      - name:  ping to openvpn server
+        command: ping -c 4 10.10.10.1
+        register: ping_to_server
+
+      - name: echo ping result
+        debug: msg="{{ ping_to_server.stdout_lines }}"
+      when: ansible_hostname == "client"
+
+    - name: Server | run iperf3
+      command: iperf3 -s &
+      async: 60 
+      poll: 0  
+      when: ansible_hostname == "server"
+
+    - name:  iperf3 openvpn with  {{ tun_type  }}
+      block:
+        - name: get info about  {{ tun_type  }} network interface
+          command: ip address show dev  {{ tun_type  }}0
+          register: get_ip_tap
+
+        - name:  iperf3 openvpn with  {{ tun_type  }}
+          command: iperf3 -c 10.10.10.1 -t 40 -i 5
+          register: iperf3_result_tap
+
+        - name:   show info about  {{ tun_type  }} network interface
+          debug: msg="{{ get_ip_tap.stdout_lines }}"
+
+        - name:  echo iperf3 result of openvpn with  {{ tun_type  }}
+          debug: msg="{{ iperf3_result_tap.stdout_lines }}"
+      when: ansible_hostname == "client"
+
+  

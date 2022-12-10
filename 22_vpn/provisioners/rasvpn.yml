@@ -1,0 +1,108 @@
+---
+- name: Otus ansible Server
+  become: true
+  hosts: server
+
+  tasks:
+    - name: Configure for RAS server
+      block:
+        - name: rasvpn | install easy-rsa
+          yum:
+            name:
+              - easy-rsa
+            state: present
+
+        - name: Initialize PKI
+          command: echo 'yes' | /usr/share/easy-rsa/3.0.8/easyrsa init-pki
+          args:
+            chdir: "/etc/openvpn"
+            creates: "/etc/openvpn/pki"
+
+    - name: Build CA key
+      shell: echo 'rasvpn' | /usr/share/easy-rsa/3.0.8/easyrsa build-ca nopass
+      args:
+        chdir: "/etc/openvpn"
+        creates: "/etc/openvpn/pki/ca.key"
+
+    - name: Build the DH (Diffie-Hellman) key
+      command: /usr/share/easy-rsa/3.0.8/easyrsa gen-dh
+      args:
+        chdir: "/etc/openvpn"
+        creates: "/etc/openvpn/pki/dh.pem"
+
+    - name: Generate the server sertificate/key
+      shell: echo 'rasvpn' | /usr/share/easy-rsa/3.0.8/easyrsa gen-req server nopass
+      args:
+        chdir: "/etc/openvpn"
+        creates: "/etc/openvpn/pki/private/server.key"
+
+    - name: Get the new CA to sign our server key
+      shell: echo 'yes' | /usr/share/easy-rsa/3.0.8/easyrsa sign-req server server
+      args:
+        chdir: "/etc/openvpn"
+        creates: "/etc/openvpn/pki/issued/server.crt"
+
+    - name: Generate TA key
+      command: openvpn --genkey --secret ta.key
+      args:
+        chdir: "/etc/openvpn"
+        creates: "/etc/openvpn/ta.key"
+
+    - name: Create the client keys
+      shell: echo 'client' | /usr/share/easy-rsa/3/easyrsa gen-req client nopass
+      args:
+        chdir: "/etc/openvpn"
+        creates: "/etc/openvpn/pki/private/client.key"
+
+    - name: Get the certificate authority to sign the client request
+      shell: echo 'yes' | /usr/share/easy-rsa/3/easyrsa sign-req client client
+      args:
+        chdir: "/etc/openvpn"
+        creates: "/etc/openvpn/pki/issued/client.crt"
+
+    - name:   Copy config file for server
+      copy:
+        src: server.conf
+        dest: /etc/openvpn
+
+    - name: r Start openvpn service
+      service: 
+        name: openvpn@server
+        state: restarted
+        enabled: true
+
+
+
+
+    - name: Deploy the code
+      synchronize:
+        mode: pull
+        src: "/etc/openvpn/pki/{{ item }}"
+        dest: "./vpn_conf"
+        recursive: yes
+        delete: no
+        times: yes
+      loop:
+      - "ca.crt"
+      - "issued/client.crt"
+      - "private/client.key"
+
+
+- name: Otus ansible Client
+  become: true
+  hosts: client
+
+  tasks:
+  - name:  Copy serts and keys for client
+    copy:
+      src: "vpn_conf/{{ item }}"
+      dest: /etc/openvpn/
+    loop:
+    - "ca.crt"
+    - "client.crt"
+    - "client.key"
+  
+  - name: copy config file for client
+    copy: 
+      src: client.conf
+      dest: /etc/openvpn/
