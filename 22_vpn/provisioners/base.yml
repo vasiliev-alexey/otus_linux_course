@@ -1,0 +1,26 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+  tasks:
+    - name: provisioner info
+      ansible.builtin.debug:
+        msg: "Hi otus -task 22  {{ inventory_hostname }}"
+
+    - name: Install EPEL
+      yum:
+        name: epel-release
+        state: present
+
+    - name: Install OpenVPN
+      yum:
+        name:
+          - openvpn
+          - iperf3
+        state: present
+
+    - name: SELinux -> permissive mode
+      selinux:
+        policy: targeted
+        state: disabled
