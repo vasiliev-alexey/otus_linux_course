@@ -26,3 +26,5 @@
 [21. OSPF](21_ospf/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/OSPF_Network.svg" height="20"   alt="Ansible_logo">   
 [22. VPN](22_vpn/README.md)    <img src="https://cdn.worldvectorlogo.com/logos/openvpn-2.svg" height="20"   alt="vpn_logo">   
 [23. Dns](23_dns/README.md)    <img src="https://img.icons8.com/officel/512/dns.png" height="20"   alt="Dbs_logo">   
+
+[25. LDAP](25_ldap/README.md)    <img src="https://icons.veryicon.com/png/o/business/cloud-desktop/personal-ldap.png" height="20"   alt="ldap_logo">   

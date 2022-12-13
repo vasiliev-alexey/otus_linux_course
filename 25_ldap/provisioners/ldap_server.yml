@@ -1,0 +1,71 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+  tasks:
+
+    - name: provisioner info 
+      ansible.builtin.debug:
+        msg: "Hi otus -task 25 {{ ansible_host }}"
+
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: main
+
+    - name: Set FQDN hostname
+      hostname:
+        name: '{{ ipa_server_fqdn }}'
+
+
+    - name: configure firewalld service
+      firewalld:
+        service: "{{ item }}"
+        state: enabled
+        permanent: yes
+      loop:
+        - http
+        - https
+
+    - name: configure firewalld port's
+      firewalld:
+        port: "{{  item  }}"
+        state: enabled
+        permanent: yes
+      loop:
+        - 389/tcp
+        - 88/tcp
+        - 464/tcp
+        - 464/udp
+        - 123/udp
+
+    - name: start and enable firewalld
+      service:
+        name: firewalld
+        state: restarted
+        enabled: yes
+
+
+    - name: install ipa-server
+      ansible.builtin.dnf:
+          name: "{{  item  }}"
+          state: latest
+      loop:
+          - ipa-server
+          - ipa-server-dns  
+
+    - name: init ipa-server
+      command:
+        cmd: |
+          ipa-server-install -U
+          --realm {{ ipa_realm }}
+          --domain {{ ipa_domain }}
+          --hostname={{ ipa_server_fqdn }}
+          --ip-address={{ ipa_server_ip }}
+          --setup-dns
+          --auto-forwarders
+          --no-reverse
+          --mkhomedir
+          -a {{ ipa_server_pass }}
+          -p {{ ipa_server_pass }}
+        creates: /etc/ipa/default.conf          

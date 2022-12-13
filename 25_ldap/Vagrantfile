@@ -1,0 +1,56 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+config.vm.define "ldap_server" do |ldap_server|
+    ldap_server.vm.box ="almalinux/9"
+    config.vm.synced_folder ".", "/vagrant", type: "rsync"
+    config.ssh.insert_key = 'false'
+
+    ldap_server.vm.host_name = 'ldap-server'
+    ldap_server.vm.network :private_network, ip: "192.168.56.101"
+ 
+    ldap_server.vm.provider "virtualbox" do |vb|
+      vb.memory = "4096"
+      vb.cpus = 2
+      
+  end
+   
+  ldap_server.vm.provision "ansible_local" do |ansible|
+    ansible.compatibility_mode = "2.0"
+    ansible.playbook = "provisioners/ldap_server.yml"
+    ansible.become = "true"
+  end
+
+  end
+
+
+  config.vm.define "ldap_client" do |client|
+    
+    config.vm.box = "almalinux/9"
+   
+    config.vm.synced_folder ".", "/vagrant", type: "rsync"
+
+    client.vm.host_name = 'ldap-client'
+    client.vm.network :private_network, ip: "192.168.56.102"
+    client.vm.provider :virtualbox do |vb|
+      vb.memory = "1024"
+      vb.cpus = 1
+    end
+ 
+    client.vm.provision "ansible_local" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "provisioners/playbook-common.yml"
+      ansible.become = "true"
+    end
+
+    client.vm.provision "ansible_local" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "provisioners/playbook-client.yml"
+      ansible.become = "true"
+    end
+ 
+  end
+
+end
