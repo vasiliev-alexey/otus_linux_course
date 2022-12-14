@@ -1,0 +1,61 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+  tasks:
+    - name: provisioner info
+      ansible.builtin.debug:
+        msg: "Hi otus -task 24  {{ inventory_hostname }}"
+
+    - name: install iptables service
+      yum:
+        name:
+          - iptables
+          - iptables-services
+        state: present
+        update_cache: true
+
+    - name: copy iptables config to InetRouter
+      template:
+        src: inetRouter/internetRouter.iptables.conf.j2
+        dest: /etc/sysconfig/iptables
+        owner: root
+        group: root
+        mode: 0600
+
+    - name: add routes
+      template:
+        src: "inetRouter/{{  item  }}"
+        dest: /etc/sysconfig/network-scripts/
+      loop:
+        - route-eth1
+      notify:
+        - restart network
+
+    - name: start and enable iptables service
+      service:
+        name: iptables
+        state: restarted
+        enabled: true
+
+    - name: set bond config
+      copy:
+        src: "{{ inventory_hostname }}/{{ item }}"
+        dest: /etc/sysconfig/network-scripts/
+        owner: root
+        group: root
+        mode: 644
+      loop:
+        - ifcfg-bond0
+        - ifcfg-eth1
+        - ifcfg-eth2
+      notify:
+        - restart network
+
+
+  handlers:
+    - name: restart network
+      service:
+        name: network
+        state: restarted
