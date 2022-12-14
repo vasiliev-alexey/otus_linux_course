@@ -1,0 +1,20 @@
+dev  {{ tun_type  }}
+
+{% if ansible_hostname == 'server' %}
+## server
+ifconfig 10.10.10.1 255.255.255.0
+{% endif %} 
+
+{% if ansible_hostname == 'client' %}
+##   client
+remote 192.168.10.10
+ifconfig 10.10.10.2 255.255.255.0
+route 192.168.10.0 255.255.255.0
+{% endif %} 
+
+topology subnet
+secret /etc/openvpn/static.key
+comp-lzo
+status /var/log/openvpn-status.log
+log /var/log/openvpn.log
+verb 3

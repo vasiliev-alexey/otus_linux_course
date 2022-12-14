@@ -11,3 +11,9 @@
 .vscode/
 *.code-workspace
 *.iso
+
+static.key
+
+
+**/vpn_conf/*
+!.gitkeep
