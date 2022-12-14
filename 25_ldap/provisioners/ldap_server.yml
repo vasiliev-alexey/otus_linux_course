@@ -7,16 +7,30 @@
 
     - name: provisioner info 
       ansible.builtin.debug:
-        msg: "Hi otus -task 25 {{ ansible_host }}"
+        msg: "Hi otus - task 25 {{ ansible_host }}"
 
     - name: Include vars
       ansible.builtin.include_vars:
         file: main
 
+    - name: Add FQDN entries to /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ item }}"
+      loop:
+        - '{{ ipa_server_ip }} {{ ipa_server_fqdn }} {{ ipa_server_fqdn }}'
+        - '{{ ipa_client_ip }} {{ ipa_client_fqdn }} {{ ipa_client_fqdn }}'
+
+
     - name: Set FQDN hostname
       hostname:
         name: '{{ ipa_server_fqdn }}'
 
+    - name: start and enable firewalld
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
 
     - name: configure firewalld service
       firewalld:
@@ -39,20 +53,18 @@
         - 464/udp
         - 123/udp
 
-    - name: start and enable firewalld
-      service:
-        name: firewalld
-        state: restarted
-        enabled: yes
-
+    - name: reload firewall
+      shell: firewall-cmd --reload
 
     - name: install ipa-server
-      ansible.builtin.dnf:
-          name: "{{  item  }}"
-          state: latest
+      yum:
+        name: "{{  item  }}"
+        state: latest
       loop:
-          - ipa-server
-          - ipa-server-dns  
+        - nss
+        - ipa-server
+        - ipa-server-dns
+        - bind-dyndb-ldap
 
     - name: init ipa-server
       command:
@@ -68,4 +80,9 @@
           --mkhomedir
           -a {{ ipa_server_pass }}
           -p {{ ipa_server_pass }}
-        creates: /etc/ipa/default.conf          
+        creates: /etc/ipa/default.conf
+
+    - name: Add firewalld ipa service
+      shell: |
+        firewall-cmd --add-service=freeipa-ldap --add-service=freeipa-ldaps &&
+        firewall-cmd --add-service=freeipa-ldap --add-service=freeipa-ldaps --permanent
