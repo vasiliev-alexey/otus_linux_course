@@ -1,0 +1,8 @@
+ipa_server_fqdn : "ipaserver.hw25.otus"
+ipa_realm: "HW25.OTUS"
+ipa_domain: "hw25.otus"
+ipa_server_ip: "192.168.56.101"
+ipa_server_login: "admin"
+ipa_server_pass: "adminhw25"
+ipa_client_fqdn  : "ipaclient.hw25.otus"
+ipa_client_ip: "192.168.56.102"

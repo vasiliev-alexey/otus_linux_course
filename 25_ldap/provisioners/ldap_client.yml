@@ -1,0 +1,54 @@
+---
+- name: Otus ansible
+  hosts: all
+  become: true
+
+
+
+  tasks:
+ 
+    - name: provisioner info 
+      ansible.builtin.debug:
+        msg: "Hi otus -task 25 {{ ansible_host }}"
+ 
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: main
+
+    - name: Set FQDN hostname
+      hostname:
+        name: '{{ ipa_client_fqdn }}'
+
+
+    - name: Add FQDN entries to /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ item }}"
+      loop:
+        - '{{ ipa_server_ip }} {{ ipa_server_fqdn }} {{ ipa_server_fqdn }}'
+        - '{{ ipa_client_ip }} {{ ipa_client_fqdn }} {{ ipa_client_fqdn }}'
+
+
+    - name: Install ipa packages
+      yum:
+        name:
+        - ipa-client
+        - freeipa-admintools
+        - bind-utils
+        state: present
+
+
+    - name: register client host in ldap
+      command:
+        cmd: |
+          ipa-client-install -U
+          --realm={{ ipa_realm }}
+          --domain={{ ipa_domain }}
+          --server={{ ipa_server_fqdn }}
+          --ip-address={{ ipa_server_ip }}
+          --hostname={{ ipa_client_fqdn }}
+          --mkhomedir
+          --force-ntpd
+          -p {{ ipa_server_login }}
+          -w {{ ipa_server_pass }}
+        creates: /etc/ipa/default.conf
