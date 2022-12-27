@@ -28,3 +28,4 @@
 [23. Dns](23_dns/README.md)    <img src="https://img.icons8.com/officel/512/dns.png" height="20"   alt="Ansible_logo">   
 [24. Строим бонды и вланы](24_vlan/README.md)    <img src="https://upload.wikimedia.org/wikipedia/commons/8/85/VLAN_virtual_network_interfaces.svg" height="20"   alt="Ansible_logo">   
 [25. LDAP](25_ldap/README.md)    <img src="https://icons.veryicon.com/png/o/business/cloud-desktop/personal-ldap.png" height="20"   alt="ldap_logo">   
+[26. WEB](26_web/README.md)    <img src="https://pic.onlinewebfonts.com/svg/img_504359.png" height="20"   alt="web_logo">   
